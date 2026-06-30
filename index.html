@@ -610,7 +610,7 @@ Reproducir el reporte
   function q(s){return document.querySelector(s);}
   var caption=q('[data-caption]'),playBtn=q('[data-play]'),counter=q('[data-counter]'),progress=q('[data-progress]'),cta=q('[data-cta-play]');
   var bgm=q('[data-bgm]');if(bgm){bgm.volume=0.0;}
-  function bgmPlay(){if(!bgm)return;var p=bgm.play();if(p&&p.catch)p.catch(function(){});var v=bgm.volume;var t=setInterval(function(){v=Math.min(0.056,v+0.007);bgm.volume=v;if(v>=0.056)clearInterval(t);},90);}
+  function bgmPlay(){if(!bgm)return;var p=bgm.play();if(p&&p.catch)p.catch(function(){});var v=bgm.volume;var t=setInterval(function(){v=Math.min(0.05,v+0.006);bgm.volume=v;if(v>=0.05)clearInterval(t);},90);}
   function bgmStop(){if(!bgm)return;var v=bgm.volume;var t=setInterval(function(){v=Math.max(0,v-0.02);bgm.volume=v;if(v<=0){clearInterval(t);try{bgm.pause();}catch(e){}}},70);}
   function hideCTA(){if(cta){cta.style.opacity='0';cta.style.pointerEvents='none';setTimeout(function(){cta.style.display='none';},300);}}
   function clearTimers(){timers.forEach(clearTimeout);timers=[];if(audio){try{audio.pause();}catch(e){}audio=null;}}
