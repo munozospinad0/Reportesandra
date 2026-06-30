@@ -143,12 +143,16 @@ a.lnk:hover{transform:translateY(-3px)}
 .h2::after{content:'';position:absolute;left:0;bottom:-.35rem;height:3px;width:64px;border-radius:3px;background:linear-gradient(90deg,${GOLD},${GOLD_LT})}
 @media (max-width:700px){
   .slide{padding:3.2rem 1rem 6rem !important;justify-content:flex-start !important;overflow-y:auto !important;-webkit-overflow-scrolling:touch}
-  .slide.cover{justify-content:center !important}
   .wrap{max-width:100% !important}
   .wrap [style*="grid-template-columns"]{grid-template-columns:1fr !important}
-  .slide.cover[style*="flex-direction:row"]{flex-direction:column !important;text-align:center;gap:1.1rem !important}
-  .cover .title{font-size:2.3rem !important}
-  .cover .num,.cover .shine{font-size:3.6rem !important}
+  .slide.cover{justify-content:flex-start !important;padding-top:2.6rem !important;align-items:center !important}
+  .slide.cover[style*="flex-direction:row"]{flex-direction:column !important;text-align:center !important;align-items:center !important;gap:1.3rem !important}
+  .slide.cover > div{max-width:100% !important}
+  .cover .sticker{display:none !important}
+  .cover .logo{font-size:25px !important}
+  .cover .title{font-size:2.3rem !important;margin-top:.5rem !important}
+  .cover .num,.cover .shine{font-size:3.4rem !important}
+  .cover [style*="flex-wrap:wrap"]{justify-content:center !important}
   .h2{font-size:1.5rem !important;line-height:1.12 !important}
   .eyebrow{font-size:.62rem !important;margin-bottom:.6rem !important}
   .tbl{font-size:.72rem !important}
@@ -705,7 +709,7 @@ S.push(`<section class="slide cover" data-audio="audio/24.mp3" data-narr="En res
 
 // ---------- chrome ----------
 const CHROME = `</div>
-<!-- musica de fondo desactivada (a peticion) -->
+<audio data-bgm loop preload="${WEB?'none':'auto'}" src="${WEB?'bg-elegante.mp3':('data:audio/mpeg;base64,'+BGM)}"></audio>
 <div data-caption style="position:fixed;bottom:clamp(4.3rem,9vh,5.6rem);left:50%;transform:translateX(-50%);z-index:50;max-width:min(90vw,820px);text-align:center;background:rgba(39,57,63,.95);color:#fff;backdrop-filter:blur(10px);padding:.7rem 1.3rem;border-radius:16px;font-size:clamp(.9rem,2.2vw,1.05rem);line-height:1.4;border:1.5px solid ${GOLD};opacity:0;transition:opacity .4s;pointer-events:none"></div>
 <div style="position:fixed;top:0;left:0;height:4px;z-index:55;background:linear-gradient(90deg,${NAVY},${GOLD});width:0;transition:width .5s" data-progress></div>
 <button data-cta-play aria-label="Reproducir el reporte" style="position:fixed;left:50%;bottom:clamp(5.6rem,13vh,7.6rem);transform:translateX(-50%);z-index:60;cursor:pointer;border:2px solid ${NAVY};font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(1.05rem,2.6vw,1.4rem);color:${NAVY};background:${GOLD};padding:.8rem 1.6rem;border-radius:40px;box-shadow:0 10px 26px -6px rgba(61,89,100,.6);display:inline-flex;align-items:center;gap:.65rem;animation:ctaPulse 1.6s ease-in-out infinite">
@@ -729,7 +733,7 @@ const JS = `<script>
   function q(s){return document.querySelector(s);}
   var caption=q('[data-caption]'),playBtn=q('[data-play]'),counter=q('[data-counter]'),progress=q('[data-progress]'),cta=q('[data-cta-play]');
   var bgm=q('[data-bgm]');if(bgm){bgm.volume=0.0;}
-  function bgmPlay(){if(!bgm)return;var p=bgm.play();if(p&&p.catch)p.catch(function(){});var v=bgm.volume;var t=setInterval(function(){v=Math.min(0.032,v+0.004);bgm.volume=v;if(v>=0.032)clearInterval(t);},90);}
+  function bgmPlay(){if(!bgm)return;var p=bgm.play();if(p&&p.catch)p.catch(function(){});var v=bgm.volume;var t=setInterval(function(){v=Math.min(0.022,v+0.003);bgm.volume=v;if(v>=0.022)clearInterval(t);},90);}
   function bgmStop(){if(!bgm)return;var v=bgm.volume;var t=setInterval(function(){v=Math.max(0,v-0.02);bgm.volume=v;if(v<=0){clearInterval(t);try{bgm.pause();}catch(e){}}},70);}
   function hideCTA(){if(cta){cta.style.opacity='0';cta.style.pointerEvents='none';setTimeout(function(){cta.style.display='none';},300);}}
   function clearTimers(){timers.forEach(clearTimeout);timers=[];if(audio){try{audio.pause();}catch(e){}audio=null;}}
