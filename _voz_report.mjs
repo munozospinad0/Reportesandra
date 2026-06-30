@@ -10,7 +10,7 @@ const DECK  = 'c:/clientes/Sandra Clavijo/reporte-sandra/index.html';
 const ADIR  = 'c:/clientes/Sandra Clavijo/reporte-sandra/audio';
 const VOICE = 'dQ0C8BEdKF2odmELvNee';            // David
 const MODEL = 'eleven_multilingual_v2';
-const FMT   = 'mp3_44100_192';   // Creator: mayor calidad de audio
+const FMT   = 'mp3_44100_128';   // 128k: voz nitida + mitad de peso -> precarga rapida (web fluido)
 const SET   = { stability:0.34, similarity_boost:0.85, style:0.30, use_speaker_boost:true, speed:1.0 }; // mas natural/humano
 const LEAD  = 0.10;
 const FORCE = process.env.FORCE === '1';

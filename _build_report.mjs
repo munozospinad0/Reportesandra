@@ -716,7 +716,7 @@ Reproducir el reporte
 const JS = `<script>
 (function(){
   var slides=[].slice.call(document.querySelectorAll('.slide'));
-  var cur=0,playing=false,auto=false,audio=null,timers=[],STEP_MS=2600,GAP_MS=950;
+  var cur=0,playing=false,auto=false,audio=null,timers=[],STEP_MS=2600,GAP_MS=400;
   var PLAY='<svg viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M7 5l12 7-12 7z" fill="currentColor"></path></svg>';
   var PAUSE='<svg viewBox="0 0 24 24" style="width:18px;height:18px" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>';
   function q(s){return document.querySelector(s);}
@@ -730,7 +730,8 @@ const JS = `<script>
   function units(s){return [].slice.call(s.querySelectorAll('[data-say]'));}
   var CACHE={};
   function prefetch(i){if(i<0||i>=slides.length)return;var src=slides[i].getAttribute('data-audio');if(!src||src.indexOf('data:')===0||CACHE[src])return;try{var a=new Audio();a.preload='auto';a.src=src;CACHE[src]=a;}catch(e){}}
-  function loadAll(){for(var i=0;i<slides.length;i++)prefetch(i);if(bgm){bgm.preload='auto';try{bgm.load();}catch(e){}}}
+  function preloadSeq(i){if(i>=slides.length)return;var src=slides[i].getAttribute('data-audio');if(!src||src.indexOf('data:')===0){preloadSeq(i+1);return;}var a=CACHE[src];if(!a){a=new Audio();a.preload='auto';a.src=src;CACHE[src]=a;}var nxt=function(){preloadSeq(i+1);};if(a.readyState>=3){nxt();}else{a.addEventListener('canplaythrough',nxt,{once:true});a.addEventListener('error',nxt,{once:true});}}
+  function loadAll(){if(bgm){bgm.preload='auto';try{bgm.load();}catch(e){}}preloadSeq(0);}
   function hideEl(el){el.style.opacity='0';el.style.transform='translateY(20px) scale(.99)';}
   function countUp(el){if(el.getAttribute('data-cnt')==='1')return;var t=el.textContent.trim();if(!/^\\d{1,3}(\\.\\d{3})+$|^\\d+$/.test(t))return;var target=parseInt(t.replace(/\\./g,''),10);if(!isFinite(target)||target<1)return;el.setAttribute('data-cnt','1');var dur=750,st=null;function step(ts){if(!st)st=ts;var p=Math.min(1,(ts-st)/dur);var e=1-Math.pow(1-p,3);el.textContent=Math.round(target*e).toLocaleString('es-CO');if(p<1)requestAnimationFrame(step);else el.textContent=t;}requestAnimationFrame(step);}
   function fadeIn(s){s.style.display='flex';s.style.opacity='0';requestAnimationFrame(function(){requestAnimationFrame(function(){s.style.opacity='1';});});}
