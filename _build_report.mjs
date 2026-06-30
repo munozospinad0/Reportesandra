@@ -66,6 +66,10 @@ function ic(name, sz=18, color='currentColor'){
 let BGM='';
 try{ BGM = readFileSync('c:/clientes/Sandra Clavijo/reporte-sandra/bg-elegante.mp3').toString('base64'); }catch(e){ console.log('aviso: sin bg-music', e.message); }
 
+// WEB=1 → audio/música como archivos externos (HTML liviano, carga rápida online).
+// Sin WEB → todo embebido en base64 (un solo archivo para enviar/offline).
+const WEB = process.env.WEB === '1';
+
 const HEAD = `<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Reporte de Resultados · Sandra Clavijo</title>
@@ -694,7 +698,7 @@ S.push(`<section class="slide cover" data-audio="audio/24.mp3" data-narr="En res
 
 // ---------- chrome ----------
 const CHROME = `</div>
-<audio data-bgm loop preload="auto" src="data:audio/mpeg;base64,${BGM}"></audio>
+<audio data-bgm loop preload="${WEB?'none':'auto'}" src="${WEB?'bg-elegante.mp3':('data:audio/mpeg;base64,'+BGM)}"></audio>
 <div data-caption style="position:fixed;bottom:clamp(4.3rem,9vh,5.6rem);left:50%;transform:translateX(-50%);z-index:50;max-width:min(90vw,820px);text-align:center;background:rgba(39,57,63,.95);color:#fff;backdrop-filter:blur(10px);padding:.7rem 1.3rem;border-radius:16px;font-size:clamp(.9rem,2.2vw,1.05rem);line-height:1.4;border:1.5px solid ${GOLD};opacity:0;transition:opacity .4s;pointer-events:none"></div>
 <div style="position:fixed;top:0;left:0;height:4px;z-index:55;background:linear-gradient(90deg,${NAVY},${GOLD});width:0;transition:width .5s" data-progress></div>
 <button data-cta-play aria-label="Reproducir el reporte" style="position:fixed;left:50%;bottom:clamp(5.6rem,13vh,7.6rem);transform:translateX(-50%);z-index:60;cursor:pointer;border:2px solid ${NAVY};font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(1.05rem,2.6vw,1.4rem);color:${NAVY};background:${GOLD};padding:.8rem 1.6rem;border-radius:40px;box-shadow:0 10px 26px -6px rgba(61,89,100,.6);display:inline-flex;align-items:center;gap:.65rem;animation:ctaPulse 1.6s ease-in-out infinite">

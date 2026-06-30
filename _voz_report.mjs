@@ -14,6 +14,7 @@ const FMT   = 'mp3_44100_192';   // Creator: mayor calidad de audio
 const SET   = { stability:0.34, similarity_boost:0.85, style:0.30, use_speaker_boost:true, speed:1.0 }; // mas natural/humano
 const LEAD  = 0.10;
 const FORCE = process.env.FORCE === '1';
+const WEB   = process.env.WEB === '1';   // WEB=1 → data-audio apunta a archivo externo (HTML liviano)
 
 function readKey(){ const raw=readFileSync(ENV,'utf8'); for(const l of raw.split(/\r?\n/)){const m=l.match(/^\s*ELEVENLABS_API_KEY\s*=\s*(.*)\s*$/); if(m)return m[1].trim().replace(/^["']|["']$/g,'');} return null; }
 const KEY = readKey(); if(!KEY){ console.error('Falta ELEVENLABS_API_KEY'); process.exit(1); }
@@ -77,7 +78,8 @@ for(let sIdx=0;sIdx<sections.length;sIdx++){
     }
     okSync++;
   } else { okReuse++; }
-  sec=sec.replace('data-audio="'+audM[1]+'"','data-audio="data:audio/mpeg;base64,'+audio.toString('base64')+'"');
+  const embedSrc = WEB ? ('audio/'+name+'.mp3') : ('data:audio/mpeg;base64,'+audio.toString('base64'));
+  sec=sec.replace('data-audio="'+audM[1]+'"','data-audio="'+embedSrc+'"');
   html=html.replace(sections[sIdx], sec);
   console.log('  ✓ '+name+' '+(audio.length/1024).toFixed(0)+'KB '+(synced?'(sync)':'(reuso)'));
 }
