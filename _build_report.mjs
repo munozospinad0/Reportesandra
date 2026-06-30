@@ -70,6 +70,10 @@ try{ BGM = readFileSync('c:/clientes/Sandra Clavijo/reporte-sandra/bg-elegante.m
 // Sin WEB → todo embebido en base64 (un solo archivo para enviar/offline).
 const WEB = process.env.WEB === '1';
 
+// Destino de los tickets de ayuda (botón "¿Necesitas ayuda?")
+const HELP_EMAIL = 'admin@ceibatic.com';
+const HELP_WA = ''; // ej. '573001234567' (sin +) para enviar por WhatsApp; vacío = usa correo
+
 const HEAD = `<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Reporte de Resultados · Sandra Clavijo</title>
@@ -712,6 +716,21 @@ const CHROME = `</div>
 <audio data-bgm loop preload="${WEB?'none':'auto'}" src="${WEB?'bg-elegante.mp3':('data:audio/mpeg;base64,'+BGM)}"></audio>
 <div data-caption style="position:fixed;bottom:clamp(4.3rem,9vh,5.6rem);left:50%;transform:translateX(-50%);z-index:50;max-width:min(90vw,820px);text-align:center;background:rgba(39,57,63,.95);color:#fff;backdrop-filter:blur(10px);padding:.7rem 1.3rem;border-radius:16px;font-size:clamp(.9rem,2.2vw,1.05rem);line-height:1.4;border:1.5px solid ${GOLD};opacity:0;transition:opacity .4s;pointer-events:none"></div>
 <div style="position:fixed;top:0;left:0;height:4px;z-index:55;background:linear-gradient(90deg,${NAVY},${GOLD});width:0;transition:width .5s" data-progress></div>
+<button data-help style="position:fixed;top:.7rem;right:.8rem;z-index:120;cursor:pointer;border:1.5px solid ${GOLD};background:rgba(42,63,72,.92);color:#fff;font-family:'Poppins',sans-serif;font-weight:600;font-size:.76rem;padding:.5rem .9rem;border-radius:30px;display:inline-flex;align-items:center;gap:.4rem;backdrop-filter:blur(6px);box-shadow:0 6px 16px -6px rgba(0,0,0,.5)">${ic('mail',14,GOLD_LT)}¿Necesitas ayuda?</button>
+<div data-help-modal style="position:fixed;inset:0;z-index:130;background:rgba(20,30,34,.72);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:${CREAM};color:${INK};max-width:440px;width:100%;border-radius:18px;padding:clamp(1.1rem,3vw,1.5rem);box-shadow:0 24px 70px -10px rgba(0,0,0,.6);font-family:'Poppins',sans-serif">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
+      <h3 style="font-family:'Playfair Display',serif;color:${NAVY};margin:0;font-size:1.3rem">Pedir ayuda</h3>
+      <button data-help-close aria-label="cerrar" style="border:none;background:none;font-size:1.6rem;line-height:.8;cursor:pointer;color:${MUT}">&times;</button>
+    </div>
+    <p style="color:${MUT};font-size:.86rem;margin:.35rem 0 1rem">Cuéntanos qué necesitas y levantamos un ticket para ayudarte.</p>
+    <input data-h-name placeholder="Tu nombre" style="width:100%;box-sizing:border-box;border:1.5px solid ${CREAM_DK};border-radius:10px;padding:.6rem .75rem;margin-bottom:.6rem;font-family:inherit;font-size:.9rem;color:${INK}">
+    <input data-h-contact placeholder="Tu correo o WhatsApp" style="width:100%;box-sizing:border-box;border:1.5px solid ${CREAM_DK};border-radius:10px;padding:.6rem .75rem;margin-bottom:.6rem;font-family:inherit;font-size:.9rem;color:${INK}">
+    <textarea data-h-msg rows="4" placeholder="Describe tu problema o lo que necesitas…" style="width:100%;box-sizing:border-box;border:1.5px solid ${CREAM_DK};border-radius:10px;padding:.6rem .75rem;margin-bottom:.8rem;font-family:inherit;font-size:.9rem;color:${INK};resize:vertical"></textarea>
+    <button data-help-send style="width:100%;cursor:pointer;border:none;background:${GOLD};color:${NAVY_DK};font-family:'Poppins',sans-serif;font-weight:700;font-size:.95rem;padding:.7rem;border-radius:12px">Enviar ticket</button>
+    <div data-help-ok style="display:none;color:${GREEN};font-size:.86rem;margin-top:.7rem;text-align:center">✓ Listo — se abrió tu correo o WhatsApp con el ticket. Envíalo y te ayudamos.</div>
+  </div>
+</div>
 <button data-cta-play aria-label="Reproducir el reporte" style="position:fixed;left:50%;bottom:clamp(5.6rem,13vh,7.6rem);transform:translateX(-50%);z-index:60;cursor:pointer;border:2px solid ${NAVY};font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(1.05rem,2.6vw,1.4rem);color:${NAVY};background:${GOLD};padding:.8rem 1.6rem;border-radius:40px;box-shadow:0 10px 26px -6px rgba(61,89,100,.6);display:inline-flex;align-items:center;gap:.65rem;animation:ctaPulse 1.6s ease-in-out infinite">
 <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:${NAVY};color:#fff;flex-shrink:0"><svg viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M7 5l12 7-12 7z" fill="currentColor"></path></svg></span>
 Reproducir el reporte
@@ -775,10 +794,26 @@ const JS = `<script>
   if(next)next.addEventListener('click',function(){go(1);});
   if(playBtn)playBtn.addEventListener('click',toggle);
   if(cta)cta.addEventListener('click',function(){auto=true;playFrom(false);});
-  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(1);}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(-1);}else if(e.key===' '){e.preventDefault();toggle();}else if(e.key==='f'||e.key==='F'){if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(function(){});else document.exitFullscreen().catch(function(){});}});
+  document.addEventListener('keydown',function(e){if((hModal&&hModal.style.display==='flex')||/INPUT|TEXTAREA/.test((e.target&&e.target.tagName)||''))return;if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();go(1);}else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();go(-1);}else if(e.key===' '){e.preventDefault();toggle();}else if(e.key==='f'||e.key==='F'){if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(function(){});else document.exitFullscreen().catch(function(){});}});
   if(slides[0]){fadeIn(slides[0]);revealAll(slides[0]);}chrome();
   loadAll();
   auto=true;playFrom(true);
+  // ---- Botón de ayuda / ticket ----
+  var hBtn=q('[data-help]'),hModal=q('[data-help-modal]'),hClose=q('[data-help-close]'),hSend=q('[data-help-send]');
+  function hShow(v){if(hModal)hModal.style.display=v?'flex':'none';}
+  if(hBtn)hBtn.addEventListener('click',function(){stop();hShow(true);});
+  if(hClose)hClose.addEventListener('click',function(){hShow(false);});
+  if(hModal)hModal.addEventListener('click',function(e){if(e.target===hModal)hShow(false);});
+  if(hSend)hSend.addEventListener('click',function(){
+    var gv=function(s){var el=q(s);return el?el.value.trim():'';};
+    var n=gv('[data-h-name]'),c=gv('[data-h-contact]'),m=gv('[data-h-msg]');
+    if(!m){var t=q('[data-h-msg]');if(t){t.style.borderColor='#B5564F';t.focus();}return;}
+    var body='Nombre: '+n+'\\nContacto: '+c+'\\n\\nProblema:\\n'+m;
+    var WA='${HELP_WA}', EMAIL='${HELP_EMAIL}';
+    if(WA){window.open('https://wa.me/'+WA+'?text='+encodeURIComponent('Hola, necesito ayuda con mi caso.\\n\\n'+body),'_blank');}
+    else{window.location.href='mailto:'+EMAIL+'?subject='+encodeURIComponent('Ticket de ayuda — Reporte Sandra Clavijo')+'&body='+encodeURIComponent(body);}
+    var ok=q('[data-help-ok]');if(ok)ok.style.display='block';
+  });
 })();
 </script></body></html>`;
 
