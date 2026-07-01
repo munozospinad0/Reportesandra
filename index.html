@@ -686,7 +686,7 @@ Reproducir el reporte
     var n=gv('[data-h-name]'),c=gv('[data-h-contact]'),m=gv('[data-h-msg]');
     if(!m){var t=q('[data-h-msg]');if(t){t.style.borderColor='#B5564F';t.focus();}return;}
     var body='Nombre: '+n+'\nContacto: '+c+'\n\nProblema:\n'+m;
-    var WA='', EMAIL='admin@ceibatic.com';
+    var WA='573015478059', EMAIL='admin@ceibatic.com';
     if(WA){window.open('https://wa.me/'+WA+'?text='+encodeURIComponent('Hola, necesito ayuda con mi caso.\n\n'+body),'_blank');}
     else{window.location.href='mailto:'+EMAIL+'?subject='+encodeURIComponent('Ticket de ayuda — Reporte Sandra Clavijo')+'&body='+encodeURIComponent(body);}
     var ok=q('[data-help-ok]');if(ok)ok.style.display='block';

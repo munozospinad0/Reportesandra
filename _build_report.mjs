@@ -72,7 +72,7 @@ const WEB = process.env.WEB === '1';
 
 // Destino de los tickets de ayuda (botón "¿Necesitas ayuda?")
 const HELP_EMAIL = 'admin@ceibatic.com';
-const HELP_WA = ''; // ej. '573001234567' (sin +) para enviar por WhatsApp; vacío = usa correo
+const HELP_WA = '573015478059'; // WhatsApp de Daniel (sin +) — los tickets abren chat con el problema redactado
 
 const HEAD = `<!DOCTYPE html><html lang="es"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
